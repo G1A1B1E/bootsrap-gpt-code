@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extended Driving Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #fpsCounter {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: white;
+        }
+
+        #speedometer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <div id="fpsCounter"></div>
+    <div id="speedometer"></div>
+
+    <script>
+        var canvas = document.getElementById("gameCanvas");
+        var ctx = canvas.getContext("2d");
+
+        var carWidth = 50;
+        var carHeight = 80;
+        var carX = canvas.width / 2 - carWidth / 2;
+        var carY = canvas.height - carHeight - 10;
+        var carSpeed = 5;
+
+        var obstacleWidth = 50;
+        var obstacleHeight = 50;
+        var obstacleSpeed = 3;
+        var obstacles = [];
+
+        var lastFrameTime = Date.now();
+        var fps = 0;
+
+        function gameLoop() {
+            var currentTime = Date.now();
+            var deltaTime = currentTime - lastFrameTime;
+            lastFrameTime = currentTime;
+
+            fps = Math.round(1000 / deltaTime);
+
+            update(deltaTime / 1000);
+            draw();
+
+            document.getElementById("fpsCounter").innerText = "FPS: " + fps;
+            document.getElementById("speedometer").innerText = "Speed: " + carSpeed.toFixed(2);
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(deltaTime) {
+            moveObstacles();
+            checkCollision();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawCar();
+            drawObstacles();
+        }
+
+        function drawCar() {
+            ctx.fillStyle = "blue";
+            ctx.fillRect(carX, carY, carWidth, carHeight);
+        }
+
+        function moveObstacles() {
+            for (var i = 0; i < obstacles.length; i++) {
+                obstacles[i].y += obstacleSpeed;
+                if (obstacles[i].y > canvas.height) {
+                    obstacles.splice(i, 1);
+                    i--;
+                }
+            }
+
+            if (Math.random() < 0.02) {
+                var obstacleX = Math.random() * (canvas.width - obstacleWidth);
+                obstacles.push({ x: obstacleX, y: 0, width: obstacleWidth, height: obstacleHeight });
+            }
+        }
+
+        function drawObstacles() {
+            ctx.fillStyle = "red";
+            for (var i = 0; i < obstacles.length; i++) {
+                ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
+            }
+        }
+
+        function checkCollision() {
+            for (var i = 0; i < obstacles.length; i++) {
+                if (
+                    carX < obstacles[i].x + obstacleWidth &&
+                    carX + carWidth > obstacles[i].x &&
+                    carY < obstacles[i].y + obstacleHeight &&
+                    carY + carHeight > obstacles[i].y
+                ) {
+                    alert("Game Over!");
+                    document.location.reload();
+                }
+            }
+        }
+
+        window.addEventListener("keydown", function (event) {
+            switch (event.keyCode) {
+                case 37: // Left arrow key
+                    carX -= carSpeed;
+                    if (carX < 0) carX = 0;
+                    break;
+                case 39: // Right arrow key
+                    carX += carSpeed;
+                    if (carX + carWidth > canvas.width) carX = canvas.width - carWidth;
+                    break;
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+
+</html>
