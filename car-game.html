@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Driving Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+    <script>
+        // Get the canvas element and its context
+        var canvas = document.getElementById("gameCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // Car properties
+        var carWidth = 50;
+        var carHeight = 80;
+        var carX = canvas.width / 2 - carWidth / 2;
+        var carY = canvas.height - carHeight - 10;
+        var carSpeed = 5;
+
+        // Obstacle properties
+        var obstacleWidth = 50;
+        var obstacleHeight = 50;
+        var obstacleSpeed = 3;
+        var obstacles = [];
+
+        // Game loop
+        function gameLoop() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the car
+            drawCar();
+
+            // Move and draw obstacles
+            moveObstacles();
+            drawObstacles();
+
+            // Check for collisions
+            if (checkCollision()) {
+                alert("Game Over!");
+                document.location.reload();
+            }
+
+            // Request the next animation frame
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Draw the car
+        function drawCar() {
+            ctx.fillStyle = "blue";
+            ctx.fillRect(carX, carY, carWidth, carHeight);
+        }
+
+        // Move and draw obstacles
+        function moveObstacles() {
+            for (var i = 0; i < obstacles.length; i++) {
+                obstacles[i].y += obstacleSpeed;
+                if (obstacles[i].y > canvas.height) {
+                    // Remove obstacles that have gone off-screen
+                    obstacles.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // Randomly generate new obstacles
+            if (Math.random() < 0.02) {
+                var obstacleX = Math.random() * (canvas.width - obstacleWidth);
+                obstacles.push({ x: obstacleX, y: 0, width: obstacleWidth, height: obstacleHeight });
+            }
+        }
+
+        function drawObstacles() {
+            ctx.fillStyle = "red";
+            for (var i = 0; i < obstacles.length; i++) {
+                ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
+            }
+        }
+
+        // Check for collisions between the car and obstacles
+        function checkCollision() {
+            for (var i = 0; i < obstacles.length; i++) {
+                if (
+                    carX < obstacles[i].x + obstacleWidth &&
+                    carX + carWidth > obstacles[i].x &&
+                    carY < obstacles[i].y + obstacleHeight &&
+                    carY + carHeight > obstacles[i].y
+                ) {
+                    return true; // Collision detected
+                }
+            }
+            return false; // No collision
+        }
+
+        // Handle keyboard input
+        window.addEventListener("keydown", function (event) {
+            switch (event.keyCode) {
+                case 37: // Left arrow key
+                    carX -= carSpeed;
+                    if (carX < 0) carX = 0;
+                    break;
+                case 39: // Right arrow key
+                    carX += carSpeed;
+                    if (carX + carWidth > canvas.width) carX = canvas.width - carWidth;
+                    break;
+            }
+        });
+
+        // Start the game loop
+        gameLoop();
+    </script>
+</body>
+
+</html>
