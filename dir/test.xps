@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FixedDocument xmlns="http://schemas.microsoft.com/xps/2005/06" xml:lang="en-us" PageWidth="816" PageHeight="1056">
+    <PageContent>
+        <FixedPage Width="816" Height="1056">
+            <TextBlock FontSize="24" Margin="100,100,0,0">Welcome to My Simple XPS Page</TextBlock>
+        </FixedPage>
+    </PageContent>
+</FixedDocument>

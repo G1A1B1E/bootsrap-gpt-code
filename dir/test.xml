@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <page>
+        <title>Welcome to My Simple XML Page</title>
+        <content>This is a simple XML page created for demonstration purposes.</content>
+    </page>
+    <hobbies>
+        <hobby>Reading</hobby>
+        <hobby>Writing</hobby>
+        <hobby>Coding</hobby>
+    </hobbies>
+    <footer>
+        <copyright>&copy; 2023 My Simple XML Page</copyright>
+    </footer>
+</data>
